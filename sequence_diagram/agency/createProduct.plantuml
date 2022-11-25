@@ -1,0 +1,23 @@
+@startuml agency create of owner product
+
+
+actor Agency
+control Server
+database product
+
+opt agency read product
+  Agency -> Server: POST /products
+  activate Server
+  Server -> Server: check token
+  alt <font color="Red">token invalid</font>
+    Agency <-- Server: 401, Invalid Token
+  else <font color="Green">token valid</font>
+    Server -> product: Create new product
+    activate product
+    Server <-- product: New product
+    Agency <-- Server: 200, New product
+  end
+end
+
+
+@enduml

@@ -1,0 +1,35 @@
+@startuml agency read transaction, billing of owner
+
+actor Agency
+control Server
+database transaction
+database billing
+
+opt agency read billing
+  Agency -> Server: GET /transaction/:id/billings
+  activate Server
+  Server -> Server: check token
+  alt <font color="Red">token invalid</font>
+    Agency <-- Server: 401, Invalid Token
+  else <font color="Green">token valid</font>
+    Server -> transaction: Find transaction with userId
+    activate transaction
+    alt <font color="Red">transaction not found</font>
+      Server <-- transaction: Transaction not found
+      Agency <-- Server: 404, Transaction not found
+    else <font color="Green">transaction found</font>
+    Server <-- transaction: Found transaction
+    Server -> billing: Find billing with transactionId
+      activate billing
+      alt <font color="Red">billing not found</font>
+        Server <-- billing: Billing not found
+        Agency <-- Server: 404, Billing not found
+      else <font color="Green">billing found</font>
+        Server <-- billing: Found billing
+        Agency <-- Server: 200, billingInfo, transactionInfo
+      end
+    end
+  end
+end
+
+@enduml

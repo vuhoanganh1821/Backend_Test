@@ -1,0 +1,10 @@
+@startuml logout
+
+actor Customer
+participant Client
+
+Customer -> Client: Logout
+Client --> Client: deleteJWT
+Client --> Customer: Logout success
+
+@enduml
