@@ -1,18 +1,18 @@
-const neededContainer = 3
+const neededContainer = 10
 const renterList = [
   {
     name: "Container renter A",
-    container: 1,
-    totalCost: 1,
+    container: 5,
+    totalCost: 5,
   },
   {
     name: "Container renter B",
     container: 2,
-    totalCost: 1,
+    totalCost: 10,
   },
   {
     name: "Container renter C",
-    container: 3,
+    container: 2,
     totalCost: 3,
   },
 ];
@@ -29,13 +29,16 @@ function rentContainersAtTheLowestPrice(listings, neededContainer) {
   listings.sort((currentLessor, nextLessor) => currentLessor.containerPrice - nextLessor.containerPrice)
 
   for (let lessor of listings) {
+    if (lessor.container >= neededContainer - count) {
+      lessor.container = neededContainer - count
+      lessor.totalCost = lessor.containerPrice * (neededContainer - count)
+      result.push(lessor)
+      count = count + lessor.container
+      break
+    }
     result.push(lessor)
     count = count + lessor.container
-    if (count >= neededContainer)
-      break
   }
-
-//  listings.forEach(lessor => console.log(lessor))
 
   result.forEach(lessor => console.log(lessor))
 
@@ -46,7 +49,7 @@ function output(result, count) {
   let totalCost = 0
   result.forEach(lessor => totalCost += lessor.totalCost)
 
-  result.forEach((lessor) => console.log('[Contract with]', lessor.name, lessor.container, 'container, price: ', lessor.totalCost))
+  result.forEach((lessor) => console.log('[Contract with]', lessor.name, lessor.container, 'container, price:', lessor.totalCost))
 
   if (count < neededContainer)
     console.log('Not enough containers')
