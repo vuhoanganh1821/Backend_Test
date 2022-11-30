@@ -1,5 +1,5 @@
-const neededContainer = 3;
-const listings = [
+const neededContainer = 3
+const renterList = [
   {
     name: "Container renter A",
     container: 1,
@@ -17,44 +17,39 @@ const listings = [
   },
 ];
 
-let count = 0
-let sum = 0
-const result = []
-const containerList = listings
-containerList.forEach(item => item.avgCost = item.totalCost / item.container)
 
-rentContainersAtTheLowestPrice()
+rentContainersAtTheLowestPrice(renterList, neededContainer)
 
-function rentContainersAtTheLowestPrice() {
-  while (count != neededContainer || containerList.length == 0) {
-  
-    const i = findIndexAvgCostMin(containerList)
-    const lowestCostContainer = containerList[i]
-  
-    count += lowestCostContainer.container
-    sum += lowestCostContainer.totalCost
-  
-    result.push(lowestCostContainer)
-    containerList.splice(i, 1)
+function rentContainersAtTheLowestPrice(listings, neededContainer) {
+  let count = 0
+  const result = []
+
+  listings.forEach(lessor => lessor.containerPrice = lessor.totalCost / lessor.container)
+
+  listings.sort((currentLessor, nextLessor) => currentLessor.containerPrice - nextLessor.containerPrice)
+
+  for (let lessor of listings) {
+    result.push(lessor)
+    count = count + lessor.container
+    if (count >= neededContainer)
+      break
   }
-  output()
+
+//  listings.forEach(lessor => console.log(lessor))
+
+  result.forEach(lessor => console.log(lessor))
+
+  output(result, count)
 }
 
-function output() {
+function output(result, count) {
+  let totalCost = 0
+  result.forEach(lessor => totalCost += lessor.totalCost)
+
+  result.forEach((lessor) => console.log('[Contract with]', lessor.name, lessor.container, 'container, price: ', lessor.totalCost))
+
   if (count < neededContainer)
     console.log('Not enough containers')
-  else 
-    result.forEach((r) => console.log('[Contract with]', r.name, r.container, 'container, price: ', r.totalCost))
-  console.log('[Sumary] total cost', sum)
-}
 
-function findIndexAvgCostMin(arr) {
-  let indexMin = 0
-  let costMin = arr[0].avgCost
-  for (let i = 1; i < arr.length; i++)
-    if (arr[i].avgCost < costMin) {
-      costMin = arr[i].avgCost
-      indexMin = i
-    }
-  return indexMin
+  console.log('[Sumary] total cost', totalCost)
 }

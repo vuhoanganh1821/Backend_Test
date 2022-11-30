@@ -34,11 +34,11 @@ export class User extends Entity {
   phone: string;
 
   @property({
-    type: 'string',
-    required: true,
+    type: 'array',
+    itemType: 'string',
+    default: ['customer'],
   })
-  role: string;
-
+  roles?: string[];
 
   constructor(data?: Partial<User>) {
     super(data);

@@ -8,38 +8,39 @@ import {User} from '../models';
 import {Credentials, UserRepository} from '../repositories/user.repository';
 import {BcryptHasher} from './hash.password';
 
-export class MyUserService implements UserService<User, Credentials>{
+export class MyUserService implements UserService<User, Credentials> {
   constructor(
     @repository(UserRepository)
     public userRepository: UserRepository,
 
     @inject(PasswordHasherBindings.PASSWORD_HASHER)
-    public hasher: BcryptHasher
-
+    public hasher: BcryptHasher,
   ) {}
   async verifyCredentials(credentials: Credentials): Promise<User> {
     // implement this method
-    const foundCustomer = await this.userRepository.findOne({
+    const foundUser = await this.userRepository.findOne({
       where: {
-        email: credentials.email
-      }
+        email: credentials.email,
+      },
     });
-    if (!foundCustomer) {
-      throw new HttpErrors.NotFound('customer not found');
+    if (!foundUser) {
+      throw new HttpErrors.NotFound('user not found');
     }
-    const passwordMatched = await this.hasher.comparePassword(credentials.password, foundCustomer.password)
+    const passwordMatched = await this.hasher.comparePassword(
+      credentials.password,
+      foundUser.password,
+    );
     if (!passwordMatched)
       throw new HttpErrors.Unauthorized('password is not valid');
-    return foundCustomer;
-    }
-  convertToUserProfile(customer: User): UserProfile {
+    return foundUser;
+  }
+  convertToUserProfile(user: User): UserProfile {
     return {
-      [securityId]: customer.id!.toString(),
-      id: customer.id,
-      email: customer.email,
-      roles: customer.role,
+      [securityId]: user.id!.toString(),
+      id: user.id,
+      email: user.email,
+      roles: user.roles,
     };
     // throw new Error('Method not implemented.');
   }
-
 }
