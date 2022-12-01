@@ -1,31 +1,30 @@
-const neededContainer = 11
-const renterList = [
+const neededContainers = 3
+const lessorList = [
   {
     name: "Container renter A",
-    container: 5,
-    totalCost: 5,
+    container: 1,
+    totalCost: 1,
   },
   {
     name: "Container renter B",
     container: 2,
-    totalCost: 10,
+    totalCost: 1,
   },
   {
     name: "Container renter C",
-    container: 10,
+    container: 3,
     totalCost: 3,
   },
 ];
 
 
-rentContainersAtTheLowestPrice(renterList, neededContainer)
+rentContainers(lessorList, neededContainers)
 
-function rentContainersAtTheLowestPrice(listings, neededContainer) {
+function rentContainers(listings, neededContainer) {
   let rentedContainer = 0
   const result = []
 
   listings.forEach(lessor => lessor.containerPrice = lessor.totalCost / lessor.container)
-
   listings.sort((currentLessor, nextLessor) => currentLessor.containerPrice - nextLessor.containerPrice)
 
   for (let lessor of listings) {
@@ -40,12 +39,10 @@ function rentContainersAtTheLowestPrice(listings, neededContainer) {
     rentedContainer += lessor.container
   }
 
-  result.forEach(lessor => console.log(lessor))
-
-  output(result, rentedContainer)
+  printResult(result, rentedContainer, neededContainer)
 }
 
-function output(result, rentedContainer) {
+function printResult(result, rentedContainer, neededContainer) {
   let totalCost = 0
   result.forEach(lessor => totalCost += lessor.totalCost)
 

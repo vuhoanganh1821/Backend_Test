@@ -95,11 +95,10 @@ export class UserController {
   async login(
     @requestBody() credentials: Credentials,
   ): Promise<{token: string}> {
-    // make sure user exist,password should be valid
+
     const user = await this.userService.verifyCredentials(credentials);
-    // console.log(user);
+
     const userProfile = await this.userService.convertToUserProfile(user);
-    // console.log(userProfile);
 
     const token = await this.jwtService.generateToken(userProfile);
     return Promise.resolve({token: token});

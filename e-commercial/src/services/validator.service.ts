@@ -12,7 +12,7 @@ export async function validateCredentials(credentials: Credentials, userReposito
       email: credentials.email
     }
   });
-  if (foundUser !== null) {
+  if (foundUser) {
     throw new HttpErrors.UnprocessableEntity('this email already exists');
   }
   if (credentials.email.length < 8) {
@@ -20,9 +20,6 @@ export async function validateCredentials(credentials: Credentials, userReposito
   }
   if (credentials.password.length < 8) {
     throw new HttpErrors.UnprocessableEntity("passwordd length should be greater than 8")
-  }
-  if (foundUser) {
-    throw new HttpErrors.UnprocessableEntity('this email already exists');
   }
 }
 
