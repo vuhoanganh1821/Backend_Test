@@ -4,7 +4,7 @@ const secondCase = cases.secondCase
 const thirdCase = cases.thirdCase
 
 
-rentContainers(firstCase.listings, firstCase.neededContainer)
+rentContainers(secondCase.listings, secondCase.neededContainer)
 
 function rentContainers(listings, neededContainer) {
   let rentedContainer = 0
