@@ -1,24 +1,10 @@
-const neededContainers = 3
-const lessorList = [
-  {
-    name: "Container renter A",
-    container: 1,
-    totalCost: 1,
-  },
-  {
-    name: "Container renter B",
-    container: 2,
-    totalCost: 1,
-  },
-  {
-    name: "Container renter C",
-    container: 3,
-    totalCost: 3,
-  },
-];
+const { cases } = require('./cases')
+const firstCase = cases.firstCase
+const secondCase = cases.secondCase
+const thirdCase = cases.thirdCase
 
 
-rentContainers(lessorList, neededContainers)
+rentContainers(firstCase.listings, firstCase.neededContainer)
 
 function rentContainers(listings, neededContainer) {
   let rentedContainer = 0
