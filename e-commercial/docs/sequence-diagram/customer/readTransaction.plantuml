@@ -1,0 +1,37 @@
+@startuml Read transaction, billing linked with product
+
+actor Customer
+control Server
+database transaction
+database billing
+database product
+
+opt read transaction, billing linked with product
+  Customer -> Server: GET /transaction/billing/product
+  activate Server
+  Server -> Server: check token
+  alt <font color="Red">token invalid</font>
+    Customer <-- Server: 401, Invalid Token
+  else <font color="Green">token valid</font>
+    Server -> transaction: Find transaction with userId
+    activate transaction
+    alt <font color="Red">transaction not found</font>
+      Server <-- transaction: Transaction not found
+      Customer <-- Server: 404, Transaction not found
+    else <font color="Green">transaction found</font>
+      Server -> billing: Find billing with transactionId
+      activate billing
+      alt <font color="Red">billing not found</font>
+        Server <-- billing: Billing not found
+        Customer <-- Server: 404, Billing not found
+      else <font color="Green">billing found</font>
+        Server -> product: Find all products with billingId
+        activate product
+        Server <-- product: productList
+        Customer <-- Server: 200, transactionInfo, billingInfo, productList
+    end
+  end
+end
+
+
+@enduml

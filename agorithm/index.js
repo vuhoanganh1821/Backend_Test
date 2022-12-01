@@ -1,54 +1,40 @@
-const neededContainer = 3
-const renterList = [
-  {
-    name: "Container renter A",
-    container: 1,
-    totalCost: 1,
-  },
-  {
-    name: "Container renter B",
-    container: 2,
-    totalCost: 1,
-  },
-  {
-    name: "Container renter C",
-    container: 3,
-    totalCost: 3,
-  },
-];
+const { cases } = require('./cases')
+const firstCase = cases.firstCase
+const secondCase = cases.secondCase
+const thirdCase = cases.thirdCase
 
 
-rentContainersAtTheLowestPrice(renterList, neededContainer)
+rentContainers(firstCase.listings, firstCase.neededContainer)
 
-function rentContainersAtTheLowestPrice(listings, neededContainer) {
-  let count = 0
+function rentContainers(listings, neededContainer) {
+  let rentedContainer = 0
   const result = []
 
   listings.forEach(lessor => lessor.containerPrice = lessor.totalCost / lessor.container)
-
   listings.sort((currentLessor, nextLessor) => currentLessor.containerPrice - nextLessor.containerPrice)
 
   for (let lessor of listings) {
-    result.push(lessor)
-    count = count + lessor.container
-    if (count >= neededContainer)
+    if (lessor.container >= neededContainer - rentedContainer) {
+      lessor.container = neededContainer - rentedContainer
+      lessor.totalCost = lessor.containerPrice * (neededContainer - rentedContainer)
+      result.push(lessor)
+      rentedContainer += lessor.container
       break
+    }
+    result.push(lessor)
+    rentedContainer += lessor.container
   }
 
-//  listings.forEach(lessor => console.log(lessor))
-
-  result.forEach(lessor => console.log(lessor))
-
-  output(result, count)
+  printResult(result, rentedContainer, neededContainer)
 }
 
-function output(result, count) {
+function printResult(result, rentedContainer, neededContainer) {
   let totalCost = 0
   result.forEach(lessor => totalCost += lessor.totalCost)
 
-  result.forEach((lessor) => console.log('[Contract with]', lessor.name, lessor.container, 'container, price: ', lessor.totalCost))
+  result.forEach((lessor) => console.log('[Contract with]', lessor.name, lessor.container, 'container, price:', lessor.totalCost))
 
-  if (count < neededContainer)
+  if (rentedContainer < neededContainer)
     console.log('Not enough containers')
 
   console.log('[Sumary] total cost', totalCost)

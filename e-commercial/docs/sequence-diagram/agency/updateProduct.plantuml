@@ -1,0 +1,23 @@
+@startuml agency update of owner product
+
+
+actor Agency
+control Server
+database product
+
+opt agency read product
+  Agency -> Server: PATCH /products/:id
+  activate Server
+  Server -> Server: check token
+  alt <font color="Red">token invalid</font>
+    Agency <-- Server: 401, Invalid Token
+  else <font color="Green">token valid</font>
+    Server -> product: Update product
+    activate product
+    Server <-- product: Updated product
+    Agency <-- Server: 204, Updated product
+  end
+end
+
+
+@enduml

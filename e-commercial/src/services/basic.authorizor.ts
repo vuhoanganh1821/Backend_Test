@@ -43,10 +43,7 @@ export async function basicAuthorization(
     return AuthorizationDecision.DENY;
   }
 
-  if (
-    currentUser.roles.includes('admin') ||
-    currentUser.roles.includes('support')
-  ) {
+  if (currentUser.roles.includes('admin')) {
     return AuthorizationDecision.ALLOW;
   }
 
