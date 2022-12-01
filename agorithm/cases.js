@@ -1,6 +1,6 @@
 const cases = {
   firstCase: {
-    neededContainer:  7,
+    neededContainer:  3,
     listings: [
       {
         name: "Container renter A",
@@ -10,12 +10,12 @@ const cases = {
       {
         name: "Container renter B",
         container: 2,
-        totalCost: 4,
+        totalCost: 1,
       },
       {
         name: "Container renter C",
         container: 3,
-        totalCost: 5,
+        totalCost: 3,
       },
     ]
   },

@@ -67,7 +67,6 @@ export class UserController {
       _.pick(userData, ['email', 'password']),
       this.userRepository,
     );
-    userData.roles = ['user'];
     userData.password = await this.hasher.hashPassword(userData.password);
     const savedUser = await this.userRepository.create(userData);
     return _.omit(savedUser, 'password');
@@ -105,7 +104,7 @@ export class UserController {
   }
 
   @authenticate('jwt')
-  @authorize({allowedRoles: ['user'], voters: [basicAuthorization]})
+  @authorize({allowedRoles: ['customer'], voters: [basicAuthorization]})
   @get('/users/me', {
     security: OPERATION_SECURITY_SPEC,
     responses: {
@@ -120,7 +119,6 @@ export class UserController {
     },
   })
   async me(
-    // @inject(SecurityBindings.USER)
     @inject(AuthenticationBindings.CURRENT_USER)
     currentUser: UserProfile,
   ): Promise<UserProfile> {
