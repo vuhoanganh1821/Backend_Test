@@ -1,23 +1,39 @@
-@startuml agency read of owner product
+@startuml read owner product agency sequence
 
 
-actor Agency
-control Server
+actor Agency 
+control server
+database agency
 database product
 
-opt agency read product
-  Agency -> Server: GET /products
-  activate Server
-  Server -> Server: check token
-  alt <font color="Red">token invalid</font>
-    Agency <-- Server: 401, Invalid Token
-  else <font color="Green">token valid</font>
-    Server -> product: Find all products
-    activate product
-    Server <-- product: productList
-    Agency <-- Server: 200, productList
+opt READ: Agency read owner product
+  Agency -> server: GET /agencies/readProduct{id}
+  activate server
+  server -> server: check token
+  alt <font color=red>token invalid</font>
+    server --> Agency: 401, unauthorized error
+  else <font color=green>token valid</font>
+    server -> server: check isAgency
+    alt <font color=red>is not agency</font>
+      server --> Agency: 403, forbidden error
+    else <font color=green>is agency</font>
+      server -> agency: find agency
+      alt <font color=red>have error</font>
+        agency --> server: error
+        server --> Agency: 500, internal error
+      else <font color=green>found agency</font>
+        agency --> product: find product
+      else <font color=green>have agency linked with product data</font>
+          product --> agency: response product
+          agency --> server: response product
+      else <font color=green>success</font>
+          agency --> server: success
+          server --> Agency: 200, success
+        end
+      end
+    end
   end
-end
+    deactivate server
 
 
 @enduml

@@ -1,0 +1,34 @@
+@startuml signup customer sequence
+
+actor Customer 
+control server
+database customer
+
+opt CREATE: Custommer sign up
+  Customer -> server: POST /signup with customer data
+  activate server
+      server -> customer: find customer with email
+      activate customer
+      alt <font color=red>have error</font>
+        customer --> server: error
+        server --> Customer: 500, internal error
+      else <font color=red>have customer data</font>
+        customer --> server: customer data
+        server --> Customer: 409, existed customer
+      else <font color=green>have no customer data</font>
+          server -> customer: create new customer
+          alt <font color=red>have error</font>
+            customer --> server: error
+            server --> Customer: 500, internal error
+          else <font color=green>success</font>
+            customer --> server: success
+            server --> Customer: 200, success
+          end
+      end
+    end
+    deactivate customer
+    deactivate server
+
+
+
+@enduml

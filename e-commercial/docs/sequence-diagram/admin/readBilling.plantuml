@@ -1,0 +1,46 @@
+@startuml read billing admin sequence
+
+actor Admin 
+control server
+database agency
+database billing
+database customer
+
+opt READ: Admin read billing
+  Admin -> server: GET /agencies/readBilling
+  activate server
+  server -> server: check token
+  alt <font color=red>token invalid</font>
+    server --> Admin: 401, unauthorized error
+  else <font color=green>token valid</font>
+    server -> server: check isAdmin
+    alt <font color=red>is not admin</font>
+      server --> Admin: 403, forbidden error
+    else <font color=green>is admin</font>
+      server -> agency: find agency
+      alt <font color=red>agency not foundr</font>
+        agency --> server: error
+        server --> Admin: 404, not found
+      else <font color=green>found agency</font>
+        agency --> billing: find billing
+        billing --> customer: find customer
+        alt <font color=red>customer not found</font>
+          customer --> billing: error
+          billing --> agency: set customerId: deleted
+          agency --> server: resonse billing
+          server --> Admin: 200, success
+        else <font color=green>customer found</font>
+          customer --> billing: return customerId
+          billing --> agency: return billing  
+        else <font color=green>success</font>
+          agency --> server: success
+          server --> Admin: 200, success
+          end
+        end
+      end
+    end
+  end
+    deactivate server
+
+
+@enduml
