@@ -1,0 +1,38 @@
+@startuml read billing customer sequence
+
+actor Customer 
+control server
+database billing
+database product
+
+opt READ: Custommer read billing
+  Customer -> server: GET /customers/readBilling
+  activate server
+  server -> server: check token
+  alt <font color=red>token invalid</font>
+    server --> Customer: 401, unauthorized error
+  else <font color=green>token valid</font>
+    server -> server: check isCustomer
+    alt <font color=red>is not customer</font>
+      server --> Customer: 403, forbidden error
+    else <font color=green>is customer</font>
+      server -> billing: find billing
+      alt <font color=red>have error</font>
+        billing --> server: error
+        server --> Customer: 500, internal error
+      else <font color=green>found billing</font>
+        billing --> product: find product
+      else <font color=green>have billing linked with product data</font>
+          product --> billing: response product
+          billing --> server: response billing
+      else <font color=green>success</font>
+          billing --> server: success
+          server --> Customer: 200, success, response data
+        end
+      end
+    end
+  end
+    deactivate server
+
+
+@enduml

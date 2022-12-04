@@ -1,35 +1,39 @@
-@startuml agency read transaction, billing of owner
+@startuml read owner billing agency sequence
 
-actor Agency
-control Server
-database transaction
+
+actor Agency 
+control server
+database agency
 database billing
 
-opt agency read billing
-  Agency -> Server: GET /transaction/:id/billings
-  activate Server
-  Server -> Server: check token
-  alt <font color="Red">token invalid</font>
-    Agency <-- Server: 401, Invalid Token
-  else <font color="Green">token valid</font>
-    Server -> transaction: Find transaction with userId
-    activate transaction
-    alt <font color="Red">transaction not found</font>
-      Server <-- transaction: Transaction not found
-      Agency <-- Server: 404, Transaction not found
-    else <font color="Green">transaction found</font>
-    Server <-- transaction: Found transaction
-    Server -> billing: Find billing with transactionId
-      activate billing
-      alt <font color="Red">billing not found</font>
-        Server <-- billing: Billing not found
-        Agency <-- Server: 404, Billing not found
-      else <font color="Green">billing found</font>
-        Server <-- billing: Found billing
-        Agency <-- Server: 200, billingInfo, transactionInfo
+opt READ: Agency read owner billing
+  Agency -> server: GET /agencies/readBilling
+  activate server
+  server -> server: check token
+  alt <font color=red>token invalid</font>
+    server --> Agency: 401, unauthorized error
+  else <font color=green>token valid</font>
+    server -> server: check isAgency
+    alt <font color=red>is not agency</font>
+      server --> Agency: 403, forbidden error
+    else <font color=green>is agency</font>
+      server -> agency: find agency
+      alt <font color=red>have error</font>
+        agency --> server: error
+        server --> Agency: 500, internal error
+      else <font color=green>found agency</font>
+        agency --> billing: find billing
+      else <font color=green>have agency linked with billing data</font>
+          billing --> agency: response billing
+          agency --> server: response billing
+      else <font color=green>success</font>
+          agency --> server: success
+          server --> Agency: 200, success
+        end
       end
     end
   end
-end
+    deactivate server
+
 
 @enduml

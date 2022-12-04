@@ -1,0 +1,46 @@
+@startuml read transaction admin sequence
+
+actor Admin 
+control server
+database agency
+database transaction
+database customer
+
+opt READ: Admin read transaction
+  Admin -> server: GET /admins/readTransaction
+  activate server
+  server -> server: check token
+  alt <font color=red>token invalid</font>
+    server --> Admin: 401, unauthorized error
+  else <font color=green>token valid</font>
+    server -> server: check isAdmin
+    alt <font color=red>is not admin</font>
+      server --> Admin: 403, forbidden error
+    else <font color=green>is admin</font>
+      server -> agency: find agency
+      alt <font color=red>agency not found</font>
+        agency --> server: error
+        server --> Admin: 404, not found
+      else <font color=green>found agency</font>
+        agency --> transaction: find transaction
+        transaction --> customer: find customer
+        alt <font color=red>customer not found</font>
+          customer --> transaction: error
+          transaction --> agency: set customerId: deleted
+          agency --> server: resonse transaction
+          server --> Admin: 200, success
+        else <font color=green>customer found</font>
+          customer --> transaction: return customerId
+          transaction --> agency: return transaction  
+        else <font color=green>success</font>
+          agency --> server: success
+          server --> Admin: 200, success
+          end
+        end
+      end
+    end
+  end
+    deactivate server
+
+
+@enduml
